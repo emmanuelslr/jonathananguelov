@@ -1,0 +1,10 @@
+﻿{
+  "name": "jonathananguelov.com",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix jonathan-app run dev",
+    "build": "npm --prefix jonathan-app run build",
+    "start": "npm --prefix jonathan-app run start",
+    "lint": "npm --prefix jonathan-app run lint"
+  }
+}

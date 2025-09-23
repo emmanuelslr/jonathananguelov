@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+iframe[src*="hubspot"] {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .meetings-iframe-container,
+  .meetings-iframe-container iframe[src*="hubspot"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+.hubspot-calendar-anchor {
+  width: 100%;
+}
+
+.hubspot-calendar-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  margin: 0.75rem 0;
+  border: none;
+  border-radius: 9999px;
+  background: #012634;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(1, 38, 52, 0.18);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hubspot-calendar-trigger:hover,
+.hubspot-calendar-trigger:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(1, 38, 52, 0.22);
+}
+
+.hubspot-calendar-trigger:focus {
+  outline: 2px solid rgba(1, 38, 52, 0.4);
+  outline-offset: 4px;
+}
+
+.hubspot-calendar-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  background: rgba(17, 24, 39, 0.6);
+  z-index: 9999;
+}
+
+.hubspot-calendar-modal {
+  width: min(520px, 100%);
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.32);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hubspot-calendar-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  background: #f8fafc;
+}
+
+.hubspot-calendar-modal-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #012634;
+}
+
+.hubspot-calendar-close {
+  border: none;
+  background: none;
+  color: #012634;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.hubspot-calendar-close:hover,
+.hubspot-calendar-close:focus {
+  color: #1f2937;
+}
+
+.hubspot-calendar-modal-body {
+  flex: 1;
+  overflow: auto;
+}
+
+.hubspot-calendar-modal-body iframe {
+  width: 100%;
+  min-height: 70vh;
+  border: 0;
+}
+
+@media (min-width: 769px) {
+  .hubspot-calendar-trigger {
+    display: none;
+  }
+}
