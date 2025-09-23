@@ -58,12 +58,12 @@ export default function NewsletterSignup() {
             Accès prioritaire aux conseils, vidéos et webinaires de Jonathan
           </h2>
           <p className="text-base text-white/80">
-            Inscris-toi pour recevoir chaque semaine mes insights sur la croissance des startups, l'immobilier et les ventes.
+            Inscris-toi pour recevoir chaque semaine mes insights sur la croissance des startups, l&apos;immobilier et les ventes.
           </p>
           <ul className="space-y-2 text-sm text-white/80">
             <li className="flex items-start gap-2">
               <span className="mt-1">•</span>
-              <span>Stratégies actionnables issues d'Aircall et d'Aguesseau Capital.</span>
+              <span>Stratégies actionnables issues d&apos;Aircall et d&apos;Aguesseau Capital.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1">•</span>
@@ -71,7 +71,7 @@ export default function NewsletterSignup() {
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1">•</span>
-              <span>Ressources réservées au club d'investisseurs de Jonathan.</span>
+              <span>Ressources réservées au club d&apos;investisseurs de Jonathan.</span>
             </li>
           </ul>
         </div>
@@ -133,7 +133,7 @@ export default function NewsletterSignup() {
 
           {status === "success" ? (
             <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-              Merci ! Ta demande d'inscription est bien reçue.
+              Merci ! Ta demande d&apos;inscription est bien reçue.
             </p>
           ) : null}
           {status === "error" ? (

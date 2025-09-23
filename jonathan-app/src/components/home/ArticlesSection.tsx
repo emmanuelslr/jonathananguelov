@@ -114,7 +114,7 @@ export default function ArticlesSection() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-base font-semibold text-[#012634] underline underline-offset-4 hover:text-[#024155]"
             >
-              Lire l'intégralité de l'article
+              Lire l&apos;intégralité de l&apos;article
               <span aria-hidden>→</span>
             </a>
           </div>
@@ -145,7 +145,7 @@ export default function ArticlesSection() {
                 rel="noopener noreferrer"
                 className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[#012634] underline underline-offset-4 hover:text-[#024155]"
               >
-                Lire l'intégralité de l'article
+                Lire l&apos;intégralité de l&apos;article
                 <span aria-hidden>→</span>
               </a>
             </article>

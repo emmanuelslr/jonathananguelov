@@ -60,7 +60,7 @@ export default function HomeHero() {
                   className="flex-1 rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-[#012634] focus:ring-2 focus:ring-[#012634]/30"
                 />
                 <button className="rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
-                  &gt;&gt; S'abonner
+                  &gt;&gt; S&apos;abonner
                 </button>
               </div>
             </div>
@@ -87,7 +87,7 @@ export default function HomeHero() {
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#012634] focus:ring-2 focus:ring-[#012634]/30"
                     />
                     <button className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
-                      &gt;&gt; S'abonner
+                      &gt;&gt; S&apos;abonner
                     </button>
                   </div>
                 </div>
