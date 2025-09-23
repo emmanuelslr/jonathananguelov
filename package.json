@@ -6,5 +6,8 @@
     "build": "npm --prefix jonathan-app run build",
     "start": "npm --prefix jonathan-app run start",
     "lint": "npm --prefix jonathan-app run lint"
+  },
+  "dependencies": {
+    "next": "15.5.3"
   }
 }
