@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "installCommand": "cd jonathan-app && npm install",
-  "buildCommand": "cd jonathan-app && npm run build",
+  "installCommand": "npm install && npm --prefix jonathan-app install",
+  "buildCommand": "npm run build",
   "outputDirectory": "jonathan-app/.next"
 }
