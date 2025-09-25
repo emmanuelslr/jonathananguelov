@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -210,7 +210,7 @@ export default function HomeHero() {
                   disabled={status === "submitting"}
                   className="rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {status === "submitting" ? "..." : ">> S&apos;abonner"}
+                  {status === "submitting" ? "..." : ">> S'abonner"}
                 </button>
               </form>
 
@@ -250,7 +250,7 @@ export default function HomeHero() {
                       disabled={status === "submitting"}
                       className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {status === "submitting" ? "..." : ">> S&apos;abonner"}
+                      {status === "submitting" ? "..." : ">> S'abonner"}
                     </button>
                   </form>
 
