@@ -20,7 +20,7 @@ const BOOK_DATA = {
 
 export default function BookSection() {
   return (
-    <AnimatedSection animation="slideUp">
+    <AnimatedSection animation="fadeIn">
       <section id="mon-livre" className="bg-[#EFF0F5] py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="rounded-3xl bg-white p-8 shadow-xl shadow-black/5 sm:p-10">

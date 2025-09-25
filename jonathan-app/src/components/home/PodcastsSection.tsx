@@ -45,7 +45,7 @@ const PODCAST_LIST = [
 
 export default function PodcastsSection() {
   return (
-    <AnimatedSection animation="slideUp">
+    <AnimatedSection animation="fadeIn">
       <section className="bg-[#EFF0F5] py-20 sm:py-28">
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
         <AnimatedSection animation="slideUp">
