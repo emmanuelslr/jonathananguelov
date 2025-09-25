@@ -46,8 +46,8 @@ export async function POST(request: Request) {
       console.log('Envoi vers HubSpot avec payload:', offstonePayload);
       
       const hubspotPayload = {
-        portalId: "146846899",
-        formId: "0cb0b552-7e58-4e7c-a6e1-b06c9d6843b1",
+        portalId: process.env.HUBSPOT_PORTAL_ID || "146846899",
+        formId: process.env.HUBSPOT_FORM_ID || "0cb0b552-7e58-4e7c-a6e1-b06c9d6843b1",
         fields: [
           { name: "email", value: data.email },
           { name: "utm_source", value: data.utm_source || "jonathananguelov" },
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
         ]
       };
 
-      const hubspotResponse = await fetch('https://api.hsforms.com/submissions/v3/integration/submit/146846899/0cb0b552-7e58-4e7c-a6e1-b06c9d6843b1', {
+      const hubspotResponse = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${process.env.HUBSPOT_PORTAL_ID || "146846899"}/${process.env.HUBSPOT_FORM_ID || "0cb0b552-7e58-4e7c-a6e1-b06c9d6843b1"}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

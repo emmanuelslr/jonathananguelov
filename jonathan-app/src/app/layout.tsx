@@ -11,7 +11,7 @@ const HUBSPOT_SCRIPT = `
   (function(d,s,i,r) {
     if (d.getElementById(i)){return;}
     var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
-    n.id=i;n.src='//js.hs-scripts.com/146846899.js';
+    n.id=i;n.src='//js.hs-scripts.com/' + (process.env.NEXT_PUBLIC_HUBSPOT_SCRIPT_ID || '146846899') + '.js';
     e.parentNode.insertBefore(n, e);
   })(document,"script","hs-script-loader");
 
@@ -37,7 +37,7 @@ const HUBSPOT_SCRIPT = `
     });
 
     // Appel API Offstone
-    fetch('https://offstone.fr/api/newsletter-jonathan', {
+    fetch(process.env.NEXT_PUBLIC_OFFSTONE_API_URL || 'https://offstone.fr/api/newsletter-jonathan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
