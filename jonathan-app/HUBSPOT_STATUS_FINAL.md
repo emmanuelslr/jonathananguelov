@@ -92,3 +92,4 @@ Il ne reste plus qu'à configurer l'envoi vers HubSpot côté Offstone. Tous les
 **L'équipe Offstone doit juste activer l'envoi vers HubSpot !** 🚀
 
 
+

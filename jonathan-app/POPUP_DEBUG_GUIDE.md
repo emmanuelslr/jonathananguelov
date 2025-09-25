@@ -95,3 +95,4 @@ position: relative;
 **Le popup simple devrait être centré. Si c'est le cas, le problème vient de React ou des styles CSS.** 🎯
 
 
+

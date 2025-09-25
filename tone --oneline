@@ -1,0 +1,63 @@
+[33mcommit 641dfa495539d8ecac11381cb8a40158710666a6[m
+Author: Hectos <emmanuel@offstone.fr>
+Date:   Thu Sep 25 14:46:10 2025 +0200
+
+    ✨ Add elegant animations and optimize code
+    
+    - Add subtle slide-up animations to main section titles
+    - Implement useIntersectionObserver hook for scroll-triggered animations
+    - Create AnimatedSection component for reusable animations
+    - Add CSS keyframe animations (fadeIn, slideUp, slideLeft, slideRight, scaleUp)
+    - Optimize images by replacing <img> with Next.js <Image> component
+    - Fix TypeScript warnings and ESLint issues
+    - Clean up unused variables and imports
+    - Ensure build passes without errors or warnings
+
+jonathan-app/DEBUG_FORM_SUBMISSION.md
+jonathan-app/FINAL_HYDRATION_SOLUTION.md
+jonathan-app/HUBSPOT_DIRECT_INTEGRATION_FIXED.md
+jonathan-app/HUBSPOT_INTEGRATION.md
+jonathan-app/HUBSPOT_INTEGRATION_STATUS.md
+jonathan-app/HUBSPOT_INTEGRATION_TEST_REPORT.md
+jonathan-app/HUBSPOT_STATUS_FINAL.md
+jonathan-app/HYDRATION_FIX.md
+jonathan-app/INTEGRATION_COMPLETE.md
+jonathan-app/POPUP_CLEAN_IMAGE.md
+jonathan-app/POPUP_DEBUG_GUIDE.md
+jonathan-app/POPUP_FINAL_FIX.md
+jonathan-app/POPUP_SIZE_ADJUSTMENTS.md
+jonathan-app/TEST_COMPLETE_SOLUTION.md
+jonathan-app/TEST_FINAL_INTEGRATION.md
+jonathan-app/TEST_FORM_SUBMISSION.md
+jonathan-app/TEST_HERO_FORMS.md
+jonathan-app/debug-popup.html
+jonathan-app/public/images/home-page/jonathan popup.jpg
+jonathan-app/src/app/api/newsletter/route.ts
+jonathan-app/src/app/globals.css
+jonathan-app/src/app/layout.tsx
+jonathan-app/src/components/AnimatedSection.tsx
+jonathan-app/src/components/ClientOnly.tsx
+jonathan-app/src/components/home/ArticlesSection.tsx
+jonathan-app/src/components/home/BioSection.tsx
+jonathan-app/src/components/home/BookSection.tsx
+jonathan-app/src/components/home/ConferencesSection.tsx
+jonathan-app/src/components/home/ConfirmationPopup.tsx
+jonathan-app/src/components/home/HomeHero.tsx
+jonathan-app/src/components/home/NewsletterSignup.tsx
+jonathan-app/src/components/home/OfferHighlights.tsx
+jonathan-app/src/components/home/PodcastsSection.tsx
+jonathan-app/src/components/home/PressFeatures.tsx
+jonathan-app/src/components/home/PressLogos.tsx
+jonathan-app/src/components/home/TelevisionSection.tsx
+jonathan-app/src/components/home/VenturesSection.tsx
+jonathan-app/src/components/home/VideosSection.tsx
+jonathan-app/src/hooks/useIntersectionObserver.ts
+jonathan-app/test-api.js
+jonathan-app/test-form-complete.html
+jonathan-app/test-hubspot-direct.js
+jonathan-app/test-hubspot-integration.js
+jonathan-app/test-invalid-email.js
+jonathan-app/test-offstone-local.js
+jonathan-app/test-offstone-url.js
+jonathan-app/test-popup-centering.html
+jonathan-app/test-simple-popup.html
