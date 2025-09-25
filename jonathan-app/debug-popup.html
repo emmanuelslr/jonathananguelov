@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Popup</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f0f0f0;
+            height: 100vh;
+        }
+        
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 10000;
+        }
+        
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .popup-content {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .test-button {
+            background: #012634;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="debug-info" id="debugInfo">
+        Debug Info
+    </div>
+    
+    <h1>Debug Popup</h1>
+    <p>Ce test affiche les informations de débogage du popup.</p>
+    
+    <button class="test-button" onclick="showPopup()">Afficher Popup</button>
+    <button class="test-button" onclick="hidePopup()">Masquer Popup</button>
+    
+    <div id="popup" class="popup-overlay hidden">
+        <div class="popup-content">
+            <h2>🎉 Popup de Test</h2>
+            <p>Ce popup devrait être centré.</p>
+            <button class="test-button" onclick="hidePopup()">Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        function updateDebugInfo() {
+            const popup = document.getElementById('popup');
+            const rect = popup.getBoundingClientRect();
+            const debugInfo = document.getElementById('debugInfo');
+            
+            debugInfo.innerHTML = `
+                Popup visible: ${!popup.classList.contains('hidden')}<br>
+                Position: ${rect.top}, ${rect.left}<br>
+                Size: ${rect.width} x ${rect.height}<br>
+                Window: ${window.innerWidth} x ${window.innerHeight}<br>
+                Computed style: ${window.getComputedStyle(popup).display}
+            `;
+        }
+        
+        function showPopup() {
+            console.log('Affichage du popup...');
+            document.getElementById('popup').classList.remove('hidden');
+            setTimeout(updateDebugInfo, 100);
+        }
+        
+        function hidePopup() {
+            console.log('Masquage du popup...');
+            document.getElementById('popup').classList.add('hidden');
+            updateDebugInfo();
+        }
+        
+        // Mise à jour continue des infos de debug
+        setInterval(updateDebugInfo, 1000);
+        
+        // Test automatique
+        setTimeout(() => {
+            showPopup();
+        }, 1000);
+    </script>
+</body>
+</html>
+
+

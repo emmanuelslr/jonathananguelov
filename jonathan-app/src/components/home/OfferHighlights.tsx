@@ -47,39 +47,38 @@ export default function OfferHighlights() {
     <section className="py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="bg-[#012634] rounded-3xl py-18 px-8 text-white">
+          <div className="grid gap-10 lg:grid-cols-3">
+            {OFFERS.map((offer) => (
+              <article key={offer.title} className="flex h-full flex-col gap-5 items-center text-center">
+                <div className="relative">
+                  <Image
+                    src={offer.mainImage.src}
+                    alt={offer.mainImage.alt}
+                    width={offer.mainImage.width}
+                    height={offer.mainImage.height}
+                    className="w-72 h-[26rem] rounded-3xl object-cover"
+                  />
+                </div>
 
-        <div className="grid gap-10 lg:grid-cols-3">
-          {OFFERS.map((offer) => (
-            <article key={offer.title} className="flex h-full flex-col gap-5 items-center text-center">
-              <div className="relative">
-                <Image
-                  src={offer.mainImage.src}
-                  alt={offer.mainImage.alt}
-                  width={offer.mainImage.width}
-                  height={offer.mainImage.height}
-                  className="w-72 h-[26rem] rounded-3xl object-cover"
-                />
-              </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-semibold">{offer.title}</h3>
+                  <p className="text-sm leading-relaxed text-white/85 whitespace-pre-line">{offer.description}</p>
+                </div>
 
-              <div className="space-y-2">
-                <h3 className="text-2xl font-semibold">{offer.title}</h3>
-                <p className="text-sm leading-relaxed text-white/85 whitespace-pre-line">{offer.description}</p>
-              </div>
-
-              <div className="pt-2">
-                <a
-                  href={offer.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#4B6471] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#4B6471]/30 transition hover:-translate-y-0.5 hover:bg-[#3c5260] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4B6471]"
-                >
-                  {offer.ctaLabel}
-                  <span aria-hidden>&rarr;</span>
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="pt-2">
+                  <a
+                    href={offer.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#4B6471] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#4B6471]/30 transition hover:-translate-y-0.5 hover:bg-[#3c5260] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#4B6471]"
+                  >
+                    {offer.ctaLabel}
+                    <span aria-hidden>&rarr;</span>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 ﻿import Image from "next/image";
 import type { ReactNode } from "react";
+import AnimatedSection from "../AnimatedSection";
 
 type Venture = {
   name: string;
@@ -103,12 +104,14 @@ export default function VenturesSection() {
   return (
     <section className="bg-[#f5f8fc] py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2
-          className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl"
-          style={{ fontWeight: "900" }}
-        >
-          Mes business
-        </h2>
+        <AnimatedSection animation="slideUp">
+          <h2
+            className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl"
+            style={{ fontWeight: "900" }}
+          >
+            Mes business
+          </h2>
+        </AnimatedSection>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-12">
           {VENTURES.map((venture) => (

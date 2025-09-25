@@ -1,5 +1,6 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
+import AnimatedSection from "../AnimatedSection";
 
 const BIO_PARAGRAPHS = [
   "Parti de rien, j'ai été placé en famille d'accueil à 12 ans.",
@@ -21,11 +22,13 @@ export default function BioSection() {
   return (
     <section className="relative overflow-hidden bg-[#012634] py-24 text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>
-            Qui suis-je ?
-          </h2>
-        </div>
+        <AnimatedSection animation="slideUp">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>
+              Qui suis-je ?
+            </h2>
+          </div>
+        </AnimatedSection>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="order-1 space-y-5 text-base leading-relaxed text-white/80 sm:text-lg lg:max-w-xl">

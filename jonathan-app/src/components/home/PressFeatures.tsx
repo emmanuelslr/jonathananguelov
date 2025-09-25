@@ -1,4 +1,5 @@
 ﻿import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const FEATURES = [
   {
@@ -34,11 +35,13 @@ export default function PressFeatures() {
   return (
     <section className="bg-white py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>
-            Couvertures &amp; distinctions
-          </h2>
-        </div>
+        <AnimatedSection animation="slideUp">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>
+              Couvertures &amp; distinctions
+            </h2>
+          </div>
+        </AnimatedSection>
 
         <div className="grid gap-8 lg:grid-cols-3">
           {FEATURES.map((feature) => (

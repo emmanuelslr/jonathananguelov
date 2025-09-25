@@ -1,4 +1,5 @@
 ﻿import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const FEATURED_ARTICLE = {
   logo: {
@@ -69,9 +70,11 @@ export default function ArticlesSection() {
   return (
     <section className="bg-[#f3f7fd] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl">Articles</h2>
-        </div>
+        <AnimatedSection animation="slideUp">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-black leading-tight text-[#012634] sm:text-4xl lg:text-5xl">Articles</h2>
+          </div>
+        </AnimatedSection>
 
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="flex flex-col gap-4 lg:col-span-5">

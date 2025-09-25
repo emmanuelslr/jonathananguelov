@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import ConfirmationPopup from "./ConfirmationPopup";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -9,40 +10,137 @@ export default function NewsletterSignup() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [status, setStatus] = useState<FormState>("idle");
+  const [showPopup, setShowPopup] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const isDisabled = status === "submitting";
 
+  // Éviter les problèmes d'hydratation
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Fonction pour récupérer les paramètres UTM
+  function getUtmParams() {
+    if (!isClient || typeof window === 'undefined') {
+      return {
+        utm_source: 'jonathananguelov',
+        utm_medium: 'newsletter',
+        utm_campaign: 'newsletter_jonathan',
+        utm_content: 'newsletter_signup',
+        utm_term: '',
+        page_url: '',
+        referrer: '',
+        cta_id: 'newsletter_jonathan_signup'
+      };
+    }
+    
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const utmParams = {
+        utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || 'jonathananguelov',
+        utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || 'newsletter',
+        utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || 'newsletter_jonathan',
+        utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || 'newsletter_signup',
+        utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || '',
+        page_url: window.location.href,
+        referrer: document.referrer,
+        cta_id: 'newsletter_jonathan_signup'
+      };
+
+      // Sauvegarder les UTM dans localStorage pour les futures utilisations
+      Object.entries(utmParams).forEach(([key, value]) => {
+        if (key.startsWith('utm_') && value) {
+          try {
+            localStorage.setItem(key, value);
+          } catch {
+            // Ignore localStorage errors
+          }
+        }
+      });
+
+      return utmParams;
+    } catch (error) {
+      console.warn('Error getting UTM params:', error);
+      return {
+        utm_source: 'jonathananguelov',
+        utm_medium: 'newsletter',
+        utm_campaign: 'newsletter_jonathan',
+        utm_content: 'newsletter_signup',
+        utm_term: '',
+        page_url: '',
+        referrer: '',
+        cta_id: 'newsletter_jonathan_signup'
+      };
+    }
+  }
+
+  // Fonction de validation email
+  function isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    console.log("Form submission started", { email, firstName, lastName });
+    
     if (!email) {
+      console.log("No email provided");
+      setStatus("error");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      console.log("Invalid email format");
+      setStatus("error");
       return;
     }
 
     setStatus("submitting");
+    console.log("Status set to submitting");
 
     try {
+      const utmParams = getUtmParams();
+      console.log("UTM params:", utmParams);
+      
+      const payload = {
+        email,
+        firstName,
+        lastName,
+        ...utmParams,
+      };
+      console.log("Payload to send:", payload);
+      
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          firstName,
-          lastName,
-        }),
+        body: JSON.stringify(payload),
       });
 
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Response error:", errorText);
         throw new Error("Newsletter subscription failed");
       }
 
+      const result = await response.json();
+      console.log("Response result:", result);
+
       setStatus("success");
+      console.log("Setting showPopup to true");
+      setShowPopup(true);
       setEmail("");
       setFirstName("");
       setLastName("");
+      console.log("Form submitted successfully, popup should be shown");
     } catch (error) {
-      console.error(error);
+      console.error("Form submission error:", error);
       setStatus("error");
     }
   }
@@ -127,22 +225,37 @@ export default function NewsletterSignup() {
             {status === "submitting" ? "Envoi en cours..." : "Je m'inscris"}
           </button>
 
+          {/* Bouton de test pour debug */}
+          <button
+            type="button"
+            onClick={() => {
+              console.log("Test button clicked");
+              setShowPopup(true);
+            }}
+            className="w-full rounded-full bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-green-700"
+          >
+            TEST POPUP
+          </button>
+
           <p className="text-xs text-slate-500">
             Aucun spam. Tu pourras te désinscrire en un clic depuis chaque e-mail.
           </p>
 
-          {status === "success" ? (
-            <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700">
-              Merci ! Ta demande d&apos;inscription est bien reçue.
-            </p>
-          ) : null}
           {status === "error" ? (
             <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
-              Une erreur est survenue. Réessaie dans quelques instants.
+              {!email ? "L'email est requis." : 
+               !isValidEmail(email) ? "Format d'email invalide." : 
+               "Une erreur est survenue. Réessaie dans quelques instants."}
             </p>
           ) : null}
         </form>
       </div>
+
+      {/* Popup de confirmation */}
+      <ConfirmationPopup 
+        isOpen={showPopup} 
+        onClose={() => setShowPopup(false)} 
+      />
     </section>
   );
 }

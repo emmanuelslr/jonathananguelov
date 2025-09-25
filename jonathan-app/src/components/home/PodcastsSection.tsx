@@ -1,4 +1,5 @@
 ﻿import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const FEATURED_PODCAST = {
   image: {
@@ -46,9 +47,11 @@ export default function PodcastsSection() {
   return (
     <section className="bg-[#EFF0F5] py-20 sm:py-28">
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-        <header className="mb-10 sm:mb-12">
-          <h2 className="text-3xl font-black text-[#1F2129] sm:text-4xl lg:text-5xl">Podcasts</h2>
-        </header>
+        <AnimatedSection animation="slideUp">
+          <header className="mb-10 sm:mb-12">
+            <h2 className="text-3xl font-black text-[#1F2129] sm:text-4xl lg:text-5xl">Podcasts</h2>
+          </header>
+        </AnimatedSection>
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article className="space-y-6">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const TV_APPEARANCES = [
   {
@@ -40,7 +41,9 @@ export default function TelevisionSection() {
   return (
     <section className="bg-[#012634] py-20 text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>Programmes TV</h2>
+        <AnimatedSection animation="slideUp">
+          <h2 className="text-3xl font-black leading-tight sm:text-4xl lg:text-5xl" style={{ fontWeight: '900' }}>Programmes TV</h2>
+        </AnimatedSection>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-3">
           {TV_APPEARANCES.map((tv) => (
@@ -59,7 +62,7 @@ export default function TelevisionSection() {
                   {tv.title}
                 </p>
                 <p className="text-base leading-relaxed text-white">
-                  “{tv.quote}”
+                  &ldquo;{tv.quote}&rdquo;
                 </p>
                 <a
                   href={tv.link}

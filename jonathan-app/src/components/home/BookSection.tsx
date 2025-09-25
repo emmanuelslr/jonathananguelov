@@ -49,7 +49,7 @@ export default function BookSection() {
             </div>
 
             <div className="space-y-6 text-[#012634]">
-              <h3 className="text-2xl font-semibold">“{BOOK_DATA.title}”</h3>
+              <h3 className="text-2xl font-semibold">&ldquo;{BOOK_DATA.title}&rdquo;</h3>
               <p className="text-base leading-relaxed text-[#012634]/80 sm:text-lg">
                 {BOOK_DATA.description}
               </p>

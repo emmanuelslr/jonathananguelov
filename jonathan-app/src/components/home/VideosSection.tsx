@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const VIDEOS = [
   {
@@ -52,24 +53,26 @@ export default function VideosSection() {
   return (
     <section className="bg-white py-24">
       <div className="mx-auto w-full max-w-[1120px] px-6 md:px-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-3xl font-black leading-none text-[#1F2129] sm:text-4xl lg:text-5xl">
-            Vidéos
-          </h2>
-          <a
-            href="https://www.youtube.com/@Jonathan-Anguelov"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 rounded-full bg-[#012634] px-6 py-3 text-base font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#001b26]"
-          >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-              <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 fill-current">
-                <path d="M6.293 3.293a1 1 0 0 1 1.414 0L11.414 7a1 1 0 0 1 0 1.414L7.707 12.12a1 1 0 0 1-1.414-1.414L8.586 8 6.293 5.707a1 1 0 0 1 0-1.414Z" />
-              </svg>
-            </span>
-            <span>Ma chaîne YouTube</span>
-          </a>
-        </div>
+        <AnimatedSection animation="slideUp">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-3xl font-black leading-none text-[#1F2129] sm:text-4xl lg:text-5xl">
+              Vidéos
+            </h2>
+            <a
+              href="https://www.youtube.com/@Jonathan-Anguelov"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-[#012634] px-6 py-3 text-base font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#001b26]"
+            >
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+                <svg aria-hidden="true" viewBox="0 0 16 16" className="h-4 w-4 fill-current">
+                  <path d="M6.293 3.293a1 1 0 0 1 1.414 0L11.414 7a1 1 0 0 1 0 1.414L7.707 12.12a1 1 0 0 1-1.414-1.414L8.586 8 6.293 5.707a1 1 0 0 1 0-1.414Z" />
+                </svg>
+              </span>
+              <span>Ma chaîne YouTube</span>
+            </a>
+          </div>
+        </AnimatedSection>
 
         <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {VIDEOS.map((video) => (

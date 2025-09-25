@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formulaire Newsletter</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-container { max-width: 500px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #012634; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #001a26; }
+        .error { color: red; margin-top: 5px; }
+        .success { color: green; margin-top: 5px; }
+        .test-buttons { margin: 20px 0; }
+        .test-btn { background: #28a745; margin: 5px; }
+        .test-btn:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Test Formulaire Newsletter</h1>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testValidEmail()">Test Email Valide</button>
+            <button class="test-btn" onclick="testInvalidEmail()">Test Email Invalide</button>
+            <button class="test-btn" onclick="testEmptyEmail()">Test Email Vide</button>
+            <button class="test-btn" onclick="testPopup()">Test Popup</button>
+        </div>
+
+        <form id="newsletter-form">
+            <div class="form-group">
+                <label for="firstName">Prénom</label>
+                <input type="text" id="firstName" name="firstName">
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Nom</label>
+                <input type="text" id="lastName" name="lastName">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <button type="submit">Je m'inscris</button>
+            
+            <div id="message"></div>
+        </form>
+    </div>
+
+    <script>
+        // Validation email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Fonction de test
+        function testValidEmail() {
+            document.getElementById('email').value = 'test@example.com';
+            document.getElementById('firstName').value = 'Test';
+            document.getElementById('lastName').value = 'User';
+            console.log('Test avec email valide configuré');
+        }
+
+        function testInvalidEmail() {
+            document.getElementById('email').value = 'email-invalide';
+            document.getElementById('firstName').value = 'Test';
+            document.getElementById('lastName').value = 'User';
+            console.log('Test avec email invalide configuré');
+        }
+
+        function testEmptyEmail() {
+            document.getElementById('email').value = '';
+            document.getElementById('firstName').value = 'Test';
+            document.getElementById('lastName').value = 'User';
+            console.log('Test avec email vide configuré');
+        }
+
+        function testPopup() {
+            console.log('Test popup - simulation de soumission réussie');
+            showMessage('Test popup - soumission simulée', 'success');
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type;
+        }
+
+        // Gestion du formulaire
+        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            
+            console.log('Soumission du formulaire:', { email, firstName, lastName });
+            
+            // Validation
+            if (!email) {
+                showMessage('L\'email est requis.', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showMessage('Format d\'email invalide.', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('Envoi en cours...', 'success');
+                
+                const response = await fetch('/api/newsletter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        firstName,
+                        lastName,
+                        utm_source: 'jonathananguelov',
+                        utm_medium: 'newsletter',
+                        utm_campaign: 'newsletter_jonathan',
+                        utm_content: 'newsletter_signup',
+                        utm_term: '',
+                        page_url: window.location.href,
+                        referrer: document.referrer,
+                        cta_id: 'newsletter_jonathan_signup'
+                    })
+                });
+                
+                console.log('Réponse API:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erreur de soumission');
+                }
+                
+                const result = await response.json();
+                console.log('Résultat:', result);
+                
+                showMessage('Inscription réussie ! Popup devrait s\'afficher.', 'success');
+                
+                // Vider le formulaire
+                document.getElementById('newsletter-form').reset();
+                
+            } catch (error) {
+                console.error('Erreur:', error);
+                showMessage('Erreur: ' + error.message, 'error');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
