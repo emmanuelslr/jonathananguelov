@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
+import AnimatedSection from "../AnimatedSection";
 
 const HERO_IMAGES = {
   portrait: {
@@ -145,7 +146,8 @@ export default function HomeHero() {
   }
 
   return (
-    <section className="relative bg-white py-12 sm:py-20 lg:py-24">
+    <AnimatedSection animation="slideUp">
+      <section className="relative bg-white py-12 sm:py-20 lg:py-24">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 px-4 sm:gap-12 sm:pl-2 sm:pr-8 lg:flex-row lg:items-stretch lg:gap-16 lg:pl-2 lg:pr-8">
           <div className="flex-1 space-y-6 sm:space-y-12 lg:py-4 flex flex-col justify-center lg:justify-start lg:pt-16">
             <div className="space-y-6 sm:space-y-8 text-center">
@@ -263,6 +265,7 @@ export default function HomeHero() {
           isOpen={showPopup} 
           onClose={() => setShowPopup(false)} 
         />
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

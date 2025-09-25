@@ -20,7 +20,8 @@ const PROFILE_IMAGE = {
 
 export default function BioSection() {
   return (
-    <section className="relative overflow-hidden bg-[#012634] py-24 text-white">
+    <AnimatedSection animation="slideUp">
+      <section className="relative overflow-hidden bg-[#012634] py-24 text-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <AnimatedSection animation="slideUp">
           <div className="max-w-2xl">
@@ -62,6 +63,7 @@ export default function BioSection() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

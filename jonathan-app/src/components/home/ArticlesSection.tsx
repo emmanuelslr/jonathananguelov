@@ -68,7 +68,8 @@ const SECONDARY_ARTICLES = [
 
 export default function ArticlesSection() {
   return (
-    <section className="bg-[#f3f7fd] py-20 sm:py-24">
+    <AnimatedSection animation="slideUp">
+      <section className="bg-[#f3f7fd] py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <AnimatedSection animation="slideUp">
           <div className="mb-12 text-center">
@@ -155,6 +156,7 @@ export default function ArticlesSection() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

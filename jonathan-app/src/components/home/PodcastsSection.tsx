@@ -45,7 +45,8 @@ const PODCAST_LIST = [
 
 export default function PodcastsSection() {
   return (
-    <section className="bg-[#EFF0F5] py-20 sm:py-28">
+    <AnimatedSection animation="slideUp">
+      <section className="bg-[#EFF0F5] py-20 sm:py-28">
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
         <AnimatedSection animation="slideUp">
           <header className="mb-10 sm:mb-12">
@@ -140,6 +141,7 @@ export default function PodcastsSection() {
           </aside>
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

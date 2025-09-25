@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const CONFERENCES = [
   {
@@ -43,7 +44,8 @@ const BOOK_ANCHOR = "#mon-livre";
 
 export default function ConferencesSection() {
   return (
-    <section className="bg-[#EFF0F5] py-20">
+    <AnimatedSection animation="slideUp">
+      <section className="bg-[#EFF0F5] py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="rounded-3xl bg-white p-8 shadow-xl shadow-black/5 sm:p-10">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -99,6 +101,7 @@ export default function ConferencesSection() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

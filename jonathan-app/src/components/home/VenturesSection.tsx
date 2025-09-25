@@ -102,7 +102,8 @@ const VENTURES: Venture[] = [
 
 export default function VenturesSection() {
   return (
-    <section className="bg-[#f5f8fc] py-24">
+    <AnimatedSection animation="slideUp">
+      <section className="bg-[#f5f8fc] py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <AnimatedSection animation="slideUp">
           <h2
@@ -155,6 +156,7 @@ export default function VenturesSection() {
           ))}
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }

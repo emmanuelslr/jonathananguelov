@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AnimatedSection from "../AnimatedSection";
 
 const BOOK_DATA = {
   title: "Rien à perdre",
@@ -19,7 +20,8 @@ const BOOK_DATA = {
 
 export default function BookSection() {
   return (
-    <section id="mon-livre" className="bg-[#EFF0F5] py-20">
+    <AnimatedSection animation="slideUp">
+      <section id="mon-livre" className="bg-[#EFF0F5] py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="rounded-3xl bg-white p-8 shadow-xl shadow-black/5 sm:p-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -61,6 +63,7 @@ export default function BookSection() {
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </AnimatedSection>
   );
 }
