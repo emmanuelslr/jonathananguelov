@@ -1,4 +1,137 @@
 ﻿import { NextResponse } from "next/server";
+import {
+  cleanupExpiredTokens,
+  getAllowedOrigins,
+  isOriginAllowed,
+  verifyNewsletterToken,
+} from "@/lib/newsletterSecurity";
+
+const RATE_LIMIT_PER_MINUTE = Number(process.env.NEWSLETTER_RATE_LIMIT_PER_MINUTE ?? 2000);
+const RATE_LIMIT_BURST = Number(process.env.NEWSLETTER_RATE_LIMIT_BURST ?? RATE_LIMIT_PER_MINUTE);
+const EMAIL_COOLDOWN_MS = Number(process.env.NEWSLETTER_EMAIL_COOLDOWN_MS ?? 30000);
+const HCAPTCHA_SECRET = process.env.HCAPTCHA_SECRET;
+const OFFSTONE_API_URL = process.env.OFFSTONE_API_URL;
+const OFFSTONE_API_KEY = process.env.OFFSTONE_API_KEY;
+
+const EMAIL_MAX_LENGTH = 320;
+const FIELD_MAX_LENGTH = 255;
+const PAGE_MAX_LENGTH = 2000;
+
+const rateLimitBuckets = new Map<string, { tokens: number; lastRefill: number }>();
+const recentEmails = new Map<string, number>();
+
+function getClientIp(request: Request) {
+  const header = request.headers.get("x-forwarded-for") ?? request.headers.get("forwarded");
+  if (!header) {
+    return "unknown";
+  }
+
+  const parts = header.split(",");
+  return parts[0]?.trim() ?? "unknown";
+}
+
+function sanitizeString(value: unknown, maxLength = FIELD_MAX_LENGTH) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  const normalized = trimmed.replace(/\s+/g, " ");
+  return normalized.length > maxLength ? normalized.slice(0, maxLength) : normalized;
+}
+
+function sanitizeUrl(value: unknown) {
+  if (typeof value !== "string" || !value.trim()) {
+    return "";
+  }
+
+  try {
+    const url = new URL(value);
+    const serialized = url.toString();
+    return serialized.length > PAGE_MAX_LENGTH ? serialized.slice(0, PAGE_MAX_LENGTH) : serialized;
+  } catch {
+    return "";
+  }
+}
+
+function maskEmail(email: string) {
+  const [local, domain] = email.split("@");
+  if (!local || !domain) {
+    return "hidden";
+  }
+
+  if (local.length <= 2) {
+    return `${local[0]}*@${domain}`;
+  }
+
+  return `${local[0]}***${local[local.length - 1]}@${domain}`;
+}
+
+async function verifyCaptcha(token: string, ip: string) {
+  if (!HCAPTCHA_SECRET) {
+    return false;
+  }
+
+  try {
+    const response = await fetch("https://hcaptcha.com/siteverify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        secret: HCAPTCHA_SECRET,
+        response: token,
+        remoteip: ip,
+      }),
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const result = (await response.json()) as { success?: boolean };
+    return Boolean(result.success);
+  } catch {
+    return false;
+  }
+}
+
+function pruneRecentEmails(now: number) {
+  if (recentEmails.size < 5000) {
+    return;
+  }
+
+  for (const [email, timestamp] of recentEmails) {
+    if (now - timestamp > EMAIL_COOLDOWN_MS) {
+      recentEmails.delete(email);
+    }
+  }
+}
+
+function pruneRateLimitBuckets(now: number) {
+  if (rateLimitBuckets.size < 5000) {
+    return;
+  }
+
+  for (const [key, bucket] of rateLimitBuckets) {
+    if (now - bucket.lastRefill > 600000) {
+      rateLimitBuckets.delete(key);
+    }
+  }
+}
+
+function buildJson(body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+    },
+  });
+}
 
 type NewsletterPayload = {
   email?: string;
@@ -12,97 +145,204 @@ type NewsletterPayload = {
   page_url?: string;
   referrer?: string;
   cta_id?: string;
+  captchaToken?: string;
 };
+
+async function applyRateLimit(ip: string, captchaToken?: string) {
+  const now = Date.now();
+  pruneRateLimitBuckets(now);
+
+  const bucket = rateLimitBuckets.get(ip) ?? { tokens: RATE_LIMIT_BURST, lastRefill: now };
+  const elapsedMinutes = (now - bucket.lastRefill) / 60000;
+  const replenished = elapsedMinutes * RATE_LIMIT_PER_MINUTE;
+  bucket.tokens = Math.min(RATE_LIMIT_BURST, bucket.tokens + replenished);
+  bucket.lastRefill = now;
+
+  if (bucket.tokens >= 1) {
+    bucket.tokens -= 1;
+    rateLimitBuckets.set(ip, bucket);
+    return { ok: true } as const;
+  }
+
+  if (!HCAPTCHA_SECRET) {
+    rateLimitBuckets.set(ip, bucket);
+    return { ok: false, requiresCaptcha: false } as const;
+  }
+
+  if (!captchaToken) {
+    rateLimitBuckets.set(ip, bucket);
+    return { ok: false, requiresCaptcha: true } as const;
+  }
+
+  const captchaValid = await verifyCaptcha(captchaToken, ip);
+  if (!captchaValid) {
+    rateLimitBuckets.set(ip, bucket);
+    return { ok: false, requiresCaptcha: true } as const;
+  }
+
+  rateLimitBuckets.set(ip, bucket);
+  return { ok: true, captchaValidated: true } as const;
+}
 
 export async function POST(request: Request) {
   try {
-    const data = (await request.json()) as NewsletterPayload;
+    cleanupExpiredTokens();
 
-    if (!data.email || typeof data.email !== "string") {
-      return NextResponse.json({ error: "Email requis" }, { status: 400 });
+    const origin = request.headers.get("origin");
+    const referer = request.headers.get("referer");
+
+    const allowlist = getAllowedOrigins();
+    if (allowlist.length > 0 && !isOriginAllowed(origin) && !isOriginAllowed(referer)) {
+      return buildJson({ error: "Forbidden" }, 403);
     }
 
-    // Validation du format email
+    const tokenHeader = request.headers.get("x-newsletter-token");
+    const timestampHeader = request.headers.get("x-newsletter-timestamp");
+    const signatureHeader = request.headers.get("x-newsletter-signature");
+
+    const tokenValidation = verifyNewsletterToken(tokenHeader, timestampHeader, signatureHeader);
+    if (!tokenValidation.ok) {
+      return buildJson({ error: "Invalid request" }, 403);
+    }
+
+    let data: NewsletterPayload;
+    try {
+      data = (await request.json()) as NewsletterPayload;
+    } catch {
+      return buildJson({ error: "Invalid payload" }, 400);
+    }
+
+    const emailRaw = typeof data.email === "string" ? data.email.trim() : "";
+    if (!emailRaw) {
+      return buildJson({ error: "Email required" }, 400);
+    }
+
+    if (emailRaw.length > EMAIL_MAX_LENGTH) {
+      return buildJson({ error: "Email too long" }, 400);
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      return NextResponse.json({ error: "Format d'email invalide" }, { status: 400 });
+    if (!emailRegex.test(emailRaw)) {
+      return buildJson({ error: "Invalid email" }, 400);
     }
 
-    // Préparer le payload pour l'API Offstone
+    const email = emailRaw.toLowerCase();
+    const ip = getClientIp(request);
+
+    const rateLimitResult = await applyRateLimit(ip, data.captchaToken);
+    if (!rateLimitResult.ok) {
+      if (rateLimitResult.requiresCaptcha) {
+        return buildJson({ error: "Captcha required" }, 429);
+      }
+      return buildJson({ error: "Too many requests" }, 429);
+    }
+
+    const now = Date.now();
+    pruneRecentEmails(now);
+
+    const lastSubmission = recentEmails.get(email);
+    if (lastSubmission && now - lastSubmission < EMAIL_COOLDOWN_MS) {
+      return buildJson({ error: "Duplicate submission" }, 429);
+    }
+
+    recentEmails.set(email, now);
+
+    const firstName = sanitizeString(data.firstName);
+    const lastName = sanitizeString(data.lastName);
+    const utmSource = sanitizeString(data.utm_source);
+    const utmMedium = sanitizeString(data.utm_medium);
+    const utmCampaign = sanitizeString(data.utm_campaign);
+    const utmContent = sanitizeString(data.utm_content);
+    const utmTerm = sanitizeString(data.utm_term);
+    const pageUrl = sanitizeUrl(data.page_url);
+    const referrer = sanitizeUrl(data.referrer);
+    const ctaId = sanitizeString(data.cta_id);
+
     const offstonePayload = {
-      email: data.email,
-      utm_source: data.utm_source || "jonathananguelov",
-      utm_medium: data.utm_medium || "newsletter",
-      utm_campaign: data.utm_campaign || "newsletter_jonathan",
-      utm_content: data.utm_content || "newsletter_signup",
-      utm_term: data.utm_term || "",
-      page_url: data.page_url || "",
-      referrer: data.referrer || "",
-      cta_id: data.cta_id || "newsletter_jonathan_signup"
+      email,
+      firstName,
+      lastName,
+      utm_source: utmSource || "jonathananguelov",
+      utm_medium: utmMedium || "newsletter",
+      utm_campaign: utmCampaign || "newsletter_jonathan",
+      utm_content: utmContent || "newsletter_signup",
+      utm_term: utmTerm,
+      page_url: pageUrl,
+      referrer,
+      cta_id: ctaId || "newsletter_jonathan_signup",
     };
 
-    // Appel direct à HubSpot
-    try {
-      console.log('Envoi vers HubSpot avec payload:', offstonePayload);
-      
-      // Vérifier que les variables d'environnement sont définies
-      if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
-        console.error('Variables d\'environnement HubSpot manquantes');
-        throw new Error('Configuration HubSpot manquante');
+    if (OFFSTONE_API_URL) {
+      try {
+        await fetch(OFFSTONE_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(OFFSTONE_API_KEY ? { "X-API-Key": OFFSTONE_API_KEY } : {}),
+            "User-Agent": "newsletter-service/1.0",
+          },
+          body: JSON.stringify(offstonePayload),
+        });
+      } catch (error) {
+        console.error("Offstone forwarding failed", {
+          message: error instanceof Error ? error.message : "Unknown error",
+          email: maskEmail(email),
+        });
       }
-      
+    }
+
+    if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
+      console.error("HubSpot configuration missing", { email: maskEmail(email) });
+      return buildJson({ ok: true, message: "Subscription accepted" });
+    }
+
+    try {
       const hubspotPayload = {
         portalId: process.env.HUBSPOT_PORTAL_ID,
         formId: process.env.HUBSPOT_FORM_ID,
         fields: [
-          { name: "email", value: data.email },
-          { name: "utm_source", value: data.utm_source || "jonathananguelov" },
-          { name: "utm_medium", value: data.utm_medium || "newsletter" },
-          { name: "utm_campaign", value: data.utm_campaign || "newsletter_jonathan" },
-          { name: "utm_content", value: data.utm_content || "newsletter_signup" },
-          { name: "utm_term", value: data.utm_term || "" },
-          { name: "page_url", value: data.page_url || "" },
-          { name: "cta_id", value: data.cta_id || "newsletter_jonathan_signup" }
-        ]
+          { name: "email", value: email },
+          { name: "firstname", value: firstName },
+          { name: "lastname", value: lastName },
+          { name: "utm_source", value: offstonePayload.utm_source },
+          { name: "utm_medium", value: offstonePayload.utm_medium },
+          { name: "utm_campaign", value: offstonePayload.utm_campaign },
+          { name: "utm_content", value: offstonePayload.utm_content },
+          { name: "utm_term", value: offstonePayload.utm_term },
+          { name: "page_url", value: offstonePayload.page_url },
+          { name: "cta_id", value: offstonePayload.cta_id },
+        ].filter((field) => field.value),
       };
 
-      const hubspotResponse = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${process.env.HUBSPOT_PORTAL_ID}/${process.env.HUBSPOT_FORM_ID}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+      const hubspotResponse = await fetch(
+        `https://api.hsforms.com/submissions/v3/integration/submit/${process.env.HUBSPOT_PORTAL_ID}/${process.env.HUBSPOT_FORM_ID}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(hubspotPayload),
         },
-        body: JSON.stringify(hubspotPayload)
-      });
-
-      console.log('Réponse HubSpot status:', hubspotResponse.status);
-      console.log('Réponse HubSpot headers:', Object.fromEntries(hubspotResponse.headers.entries()));
+      );
 
       if (!hubspotResponse.ok) {
-        const errorText = await hubspotResponse.text();
-        console.error('Erreur API HubSpot:', {
+        console.error("HubSpot submission failed", {
           status: hubspotResponse.status,
-          statusText: hubspotResponse.statusText,
-          body: errorText
+          email: maskEmail(email),
         });
-        
-        // Si l'API HubSpot échoue, on continue quand même
-        console.log('Continuing despite HubSpot error...');
-      } else {
-        const hubspotResult = await hubspotResponse.json();
-        console.log('Newsletter envoyée à HubSpot avec succès:', hubspotResult);
       }
-    } catch (hubspotError) {
-      console.error('Erreur envoi newsletter à HubSpot:', hubspotError);
-      // On continue même si HubSpot échoue
+    } catch (error) {
+      console.error("HubSpot request error", {
+        message: error instanceof Error ? error.message : "Unknown error",
+        email: maskEmail(email),
+      });
     }
 
-    return NextResponse.json({ 
-      ok: true, 
-      message: "Newsletter subscription successful" 
-    });
+    return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {
-    console.error("Newsletter API error", error);
-    return NextResponse.json({ error: "Unexpected error" }, { status: 500 });
+    console.error("Newsletter API error", error instanceof Error ? error.message : error);
+    return buildJson({ error: "Unexpected error" }, 500);
   }
 }
+
