@@ -134,10 +134,10 @@ export default function NewsletterSignup() {
       }
 
       setStatus("success");
-      setShowPopup(true);
       setEmail("");
       setFirstName("");
       setLastName("");
+      setShowPopup(true);
     } catch {
       resetToken();
       setStatus("error");

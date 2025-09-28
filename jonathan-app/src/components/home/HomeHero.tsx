@@ -147,8 +147,8 @@ export default function HomeHero() {
       }
 
       setStatus("success");
-      setShowPopup(true);
       setEmail("");
+      setShowPopup(true);
     } catch {
       resetToken();
       setStatus("error");
@@ -195,22 +195,26 @@ export default function HomeHero() {
                 <span className="text-base sm:text-lg font-bold text-[#012634]">Rejoindre +1 800 membres</span>
               </div>
 
-              <form onSubmit={handleSubmit} className="hidden sm:flex flex-row gap-3 max-w-md mx-auto">
+              <form
+                onSubmit={handleSubmit}
+                className="hidden sm:flex mx-auto max-w-xl items-center gap-3 rounded-full border border-white/70 bg-white px-6 py-4 shadow-[0_10px_30px_rgba(1,38,52,0.18)]"
+              >
                 <input
                   type="email"
                   placeholder="Votre email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="flex-1 rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-[#012634] focus:ring-2 focus:ring-[#012634]/30"
+                  className="flex-1 rounded-full border border-transparent bg-transparent px-4 py-3 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
                   disabled={status === "submitting"}
                   required
                 />
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-6 py-3 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {status === "submitting" ? "..." : ">> S'abonner"}
+                  <span aria-hidden="true">{"\u00bb"}</span>
+                  S&apos;abonner
                 </button>
               </form>
 
@@ -234,23 +238,24 @@ export default function HomeHero() {
               />
 
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:hidden">
-                <div className="bg-white rounded-xl p-3 shadow-lg">
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                <div className="bg-white rounded-2xl p-4 shadow-[0_10px_30px_rgba(1,38,52,0.18)]">
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                     <input
                       type="email"
                       placeholder="Votre adresse email"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#012634] focus:ring-2 focus:ring-[#012634]/30"
+                      className="w-full rounded-full border border-gray-200 px-4 py-3 text-sm text-[#012634] placeholder:text-slate-500 outline-none focus:border-[#3A8DFF] focus:ring-2 focus:ring-[#3A8DFF]/30"
                       disabled={status === "submitting"}
                       required
                     />
                     <button
                       type="submit"
                       disabled={status === "submitting"}
-                      className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#3A8DFF] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {status === "submitting" ? "..." : ">> S'abonner"}
+                      <span aria-hidden="true">{"\u00bb"}</span>
+                      S&apos;abonner
                     </button>
                   </form>
 
@@ -270,4 +275,3 @@ export default function HomeHero() {
     </AnimatedSection>
   );
 }
-
