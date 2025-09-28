@@ -37,12 +37,33 @@ export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopup
       className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 9999,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        padding: '1rem'
+      }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div 
         className={`relative w-full max-w-2xl transform transition-all duration-300 ${
           isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '42rem',
+          transform: isVisible ? 'scale(1)' : 'scale(0.95)',
+          opacity: isVisible ? 1 : 0,
+          transition: 'all 0.3s ease'
+        }}
       >
         <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
           {/* Bouton de fermeture */}

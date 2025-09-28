@@ -197,21 +197,21 @@ export default function HomeHero() {
 
               <form
                 onSubmit={handleSubmit}
-                className="hidden sm:flex mx-auto max-w-xl items-center gap-3 rounded-full border border-white/70 bg-white px-6 py-4 shadow-[0_10px_30px_rgba(1,38,52,0.18)]"
+                className="hidden sm:flex mx-auto max-w-xl items-center gap-3 rounded-full border border-white/70 bg-white px-6 py-2 shadow-[0_10px_30px_rgba(1,38,52,0.18)]"
               >
                 <input
                   type="email"
                   placeholder="Votre email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  className="flex-1 rounded-full border border-transparent bg-transparent px-4 py-3 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
+                  className="flex-1 rounded-full border border-transparent bg-transparent px-4 py-2 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
                   disabled={status === "submitting"}
                   required
                 />
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-6 py-3 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-6 py-2 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <span aria-hidden="true">{"\u00bb"}</span>
                   S&apos;abonner
@@ -245,14 +245,14 @@ export default function HomeHero() {
                       placeholder="Votre adresse email"
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
-                      className="w-full rounded-full border border-gray-200 px-4 py-3 text-sm text-[#012634] placeholder:text-slate-500 outline-none focus:border-[#3A8DFF] focus:ring-2 focus:ring-[#3A8DFF]/30"
+                      className="w-full rounded-full border border-gray-200 px-4 py-2 text-sm text-[#012634] placeholder:text-slate-500 outline-none focus:border-[#3A8DFF] focus:ring-2 focus:ring-[#3A8DFF]/30"
                       disabled={status === "submitting"}
                       required
                     />
                     <button
                       type="submit"
                       disabled={status === "submitting"}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#3A8DFF] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#3A8DFF] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <span aria-hidden="true">{"\u00bb"}</span>
                       S&apos;abonner
