@@ -9,17 +9,12 @@ interface ConfirmationPopupProps {
 }
 
 export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopupProps) {
-  const [isVisible, setIsVisible] = useState(false);
-
   useEffect(() => {
     if (isOpen) {
       // Empêcher le scroll du body quand le popup est ouvert
       document.body.style.overflow = "hidden";
-      // Délai pour l'animation d'entrée
-      setTimeout(() => setIsVisible(true), 10);
     } else {
       document.body.style.overflow = "unset";
-      setIsVisible(false);
     }
 
     // Cleanup
@@ -28,41 +23,32 @@ export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopup
     };
   }, [isOpen]);
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
     <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 transition-opacity duration-300 ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        alignItems: 'center',
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        display: isOpen ? 'flex' : 'none',
+        alignItems: 'flex-start',
         justifyContent: 'center',
         zIndex: 9999,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        padding: '1rem'
+        padding: '20px',
+        paddingTop: '10vh',
+        boxSizing: 'border-box'
       }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div 
-        className={`relative w-full max-w-2xl transform transition-all duration-300 ${
-          isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-        }`}
         style={{
           position: 'relative',
           width: '100%',
-          maxWidth: '42rem',
-          transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-          opacity: isVisible ? 1 : 0,
-          transition: 'all 0.3s ease'
+          maxWidth: '800px',
+          maxHeight: '90vh',
+          overflow: 'auto'
         }}
       >
         <div className="overflow-hidden rounded-2xl bg-white shadow-2xl">
@@ -95,26 +81,6 @@ export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopup
                     Bienvenue dans ma communauté ! Je suis ravi de vous compter parmi nous.
                   </p>
                   
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#012634]/10 flex-shrink-0 mt-0.5">
-                        <div className="h-2 w-2 rounded-full bg-[#012634]"></div>
-                      </div>
-                      <p className="text-base leading-relaxed">
-                        Je vous ai envoyé quelques questions pour mieux vous connaître.
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#012634]/10 flex-shrink-0 mt-0.5">
-                        <div className="h-2 w-2 rounded-full bg-[#012634]"></div>
-                      </div>
-                      <p className="text-base leading-relaxed">
-                        Prenez le temps d'y répondre, je lis attentivement toutes vos réponses.
-                      </p>
-                    </div>
-                  </div>
-
                   <div className="border-t border-gray-100 pt-6">
                     <p className="text-lg font-medium text-gray-900">
                       À très bientôt !
@@ -138,12 +104,12 @@ export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopup
             {/* Section image */}
             <div className="relative lg:w-80 lg:flex-shrink-0">
               <div className="relative h-64 w-full lg:h-full">
-                <Image
-                  src="/images/home-page/jonathan popup.jpg"
-                  alt="Jonathan Anguelov"
-                  fill
-                  className="object-cover object-center"
-                />
+              <Image
+                src="/images/home-page/jonathan popup off.webp"
+                alt="Jonathan Anguelov"
+                fill
+                className="object-cover object-center"
+              />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
             </div>
