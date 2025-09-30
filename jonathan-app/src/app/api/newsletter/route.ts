@@ -307,6 +307,11 @@ export async function POST(request: Request) {
       }
     }
 
+    // HubSpot integration désactivée pour éviter les doublons avec GTM
+    // Si vous souhaitez réactiver l'envoi direct à HubSpot, décommentez le code ci-dessous
+    // et assurez-vous de désactiver les tags HubSpot dans Google Tag Manager
+    
+    /*
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
@@ -328,7 +333,6 @@ export async function POST(request: Request) {
           { name: "page_url", value: offstonePayload.page_url },
           { name: "cta_id", value: offstonePayload.cta_id },
         ].filter((field) => field.value),
-        // Ajouter l'adresse IP pour l'analytics
         context: {
           ipAddress: ip !== "unknown" ? ip : undefined,
           pageUri: offstonePayload.page_url,
@@ -361,6 +365,7 @@ export async function POST(request: Request) {
         email: maskEmail(email),
       });
     }
+    */
 
     return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {
