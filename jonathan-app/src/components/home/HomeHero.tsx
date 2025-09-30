@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import AnimatedSection from "../AnimatedSection";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
@@ -35,6 +35,7 @@ export default function HomeHero() {
   const [showPopup, setShowPopup] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { getValidToken, resetToken } = useNewsletterToken();
+  const isSubmitting = useRef(false);
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -106,6 +107,11 @@ export default function HomeHero() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    // Protection contre les doubles soumissions
+    if (isSubmitting.current) {
+      return;
+    }
+
     if (!email) {
       setStatus("error");
       setErrorMessage("L'email est requis.");
@@ -118,6 +124,7 @@ export default function HomeHero() {
       return;
     }
 
+    isSubmitting.current = true;
     setStatus("submitting");
     setErrorMessage(null);
     setShowPopup(true);
@@ -151,6 +158,7 @@ export default function HomeHero() {
         setStatus("error");
         setErrorMessage(result?.error ?? "Une erreur est survenue. Reessaie dans quelques instants.");
         setShowPopup(false);
+        isSubmitting.current = false;
         return;
       }
 
@@ -163,6 +171,8 @@ export default function HomeHero() {
       setStatus("error");
       setErrorMessage("Une erreur est survenue. Reessaie dans quelques instants.");
       setShowPopup(false);
+    } finally {
+      isSubmitting.current = false;
     }
   }
 
