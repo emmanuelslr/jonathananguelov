@@ -21,13 +21,28 @@ const rateLimitBuckets = new Map<string, { tokens: number; lastRefill: number }>
 const recentEmails = new Map<string, number>();
 
 function getClientIp(request: Request) {
-  const header = request.headers.get("x-forwarded-for") ?? request.headers.get("forwarded");
-  if (!header) {
-    return "unknown";
+  // Essayer plusieurs headers pour obtenir l'IP réelle
+  const headers = [
+    request.headers.get("x-forwarded-for"),
+    request.headers.get("x-real-ip"),
+    request.headers.get("x-client-ip"),
+    request.headers.get("cf-connecting-ip"), // Cloudflare
+    request.headers.get("x-cluster-client-ip"),
+    request.headers.get("forwarded-for"),
+    request.headers.get("forwarded")
+  ];
+
+  for (const header of headers) {
+    if (header) {
+      const parts = header.split(",");
+      const ip = parts[0]?.trim();
+      if (ip && ip !== "unknown" && ip !== "::1" && ip !== "127.0.0.1") {
+        return ip;
+      }
+    }
   }
 
-  const parts = header.split(",");
-  return parts[0]?.trim() ?? "unknown";
+  return "unknown";
 }
 
 function sanitizeString(value: unknown, maxLength = FIELD_MAX_LENGTH) {
@@ -146,6 +161,7 @@ type NewsletterPayload = {
   referrer?: string;
   cta_id?: string;
   captchaToken?: string;
+  hubspotUtk?: string;
 };
 
 async function applyRateLimit(ip: string, captchaToken?: string) {
@@ -312,6 +328,13 @@ export async function POST(request: Request) {
           { name: "page_url", value: offstonePayload.page_url },
           { name: "cta_id", value: offstonePayload.cta_id },
         ].filter((field) => field.value),
+        // Ajouter l'adresse IP pour l'analytics
+        context: {
+          ipAddress: ip !== "unknown" ? ip : undefined,
+          pageUri: offstonePayload.page_url,
+          pageName: "Newsletter Signup",
+          hutk: data.hubspotUtk || request.headers.get("cookie")?.match(/hubspotutk=([^;]+)/)?.[1] || undefined,
+        },
       };
 
       const hubspotResponse = await fetch(

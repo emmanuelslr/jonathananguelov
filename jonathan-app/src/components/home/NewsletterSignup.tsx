@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
@@ -20,6 +20,13 @@ export default function NewsletterSignup() {
   const [showPopup, setShowPopup] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { getValidToken, resetToken } = useNewsletterToken();
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    if (status !== "submitting") {
+      setStatus("idle");
+    }
+  };
 
   const isDisabled = status === "submitting";
 
@@ -100,6 +107,7 @@ export default function NewsletterSignup() {
 
     setStatus("submitting");
     setErrorMessage(null);
+    setShowPopup(true);
 
     try {
       const securityToken = await getValidToken();
@@ -241,7 +249,7 @@ export default function NewsletterSignup() {
         </form>
       </div>
 
-      <ConfirmationPopup isOpen={showPopup} onClose={() => setShowPopup(false)} />
+      <ConfirmationPopup isOpen={showPopup} onClose={handleClosePopup} />
     </section>
   );
 }

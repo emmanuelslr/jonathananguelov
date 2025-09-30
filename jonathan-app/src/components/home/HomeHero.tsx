@@ -36,6 +36,13 @@ export default function HomeHero() {
   const [isClient, setIsClient] = useState(false);
   const { getValidToken, resetToken } = useNewsletterToken();
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    if (status !== "submitting") {
+      setStatus("idle");
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -113,6 +120,7 @@ export default function HomeHero() {
 
     setStatus("submitting");
     setErrorMessage(null);
+    setShowPopup(true);
 
     try {
       const securityToken = await getValidToken();
@@ -271,7 +279,7 @@ export default function HomeHero() {
           </div>
         </div>
 
-        <ConfirmationPopup isOpen={showPopup} onClose={() => setShowPopup(false)} />
+        <ConfirmationPopup isOpen={showPopup} onClose={handleClosePopup} />
       </section>
     </AnimatedSection>
   );

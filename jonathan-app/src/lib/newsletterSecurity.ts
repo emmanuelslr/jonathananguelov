@@ -30,6 +30,12 @@ export function isOriginAllowed(value: string | null) {
 
   try {
     const url = new URL(value);
+    
+    // Autoriser localhost en développement
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+      return true;
+    }
+    
     if (allowedOrigins.length === 0) {
       return true;
     }

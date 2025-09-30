@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.jonathananguelov.com/sitemap.xml
+

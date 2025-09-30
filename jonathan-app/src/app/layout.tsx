@@ -14,85 +14,43 @@ const HUBSPOT_SCRIPT = `
     e.parentNode.insertBefore(n, e);
   })(document, 'script', 'hs-script-loader');
 
-  async function submitNewsletterPayload(payload) {
-    try {
-      const tokenResponse = await fetch('/api/newsletter/token', {
-        method: 'GET',
-        credentials: 'include',
-        cache: 'no-store'
-      });
-
-      if (!tokenResponse.ok) {
-        return;
+  // S'assurer que les cookies HubSpot sont disponibles pour le tracking
+  window.addEventListener('load', function() {
+    if (typeof window.hbspt !== 'undefined') {
+      // Forcer la création du cookie hubspotutk si nécessaire
+      if (!document.cookie.includes('hubspotutk=')) {
+        var utk = 'hsutk_' + Math.random().toString(36).substr(2, 9);
+        document.cookie = 'hubspotutk=' + utk + '; path=/; max-age=31536000';
       }
-
-      const tokenData = await tokenResponse.json();
-
-      await fetch('/api/newsletter', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Newsletter-Token': tokenData.token,
-          'X-Newsletter-Timestamp': String(tokenData.timestamp),
-          'X-Newsletter-Signature': tokenData.signature
-        },
-        body: JSON.stringify(payload)
-      });
-    } catch (error) {
-      console.error('Newsletter forwarding failed', error);
     }
-  }
-
-  window.onHubSpotFormSubmit = async function(formData) {
-    if (!formData || !formData.email) {
-      return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const utmParams = {
-      utm_source: urlParams.get('utm_source') || localStorage.getItem('utm_source') || 'jonathananguelov',
-      utm_medium: urlParams.get('utm_medium') || localStorage.getItem('utm_medium') || 'newsletter',
-      utm_campaign: urlParams.get('utm_campaign') || localStorage.getItem('utm_campaign') || 'newsletter_jonathan',
-      utm_content: urlParams.get('utm_content') || localStorage.getItem('utm_content') || 'newsletter_signup',
-      utm_term: urlParams.get('utm_term') || localStorage.getItem('utm_term') || ''
-    };
-
-    Object.entries(utmParams).forEach(function(entry) {
-      var key = entry[0];
-      var value = entry[1];
-      if (key.indexOf('utm_') === 0 && value) {
-        try {
-          localStorage.setItem(key, value);
-        } catch (error) {}
-      }
-    });
-
-    const payload = {
-      email: formData.email,
-      firstName: formData.firstname || '',
-      lastName: formData.lastname || '',
-      utm_source: utmParams.utm_source,
-      utm_medium: utmParams.utm_medium,
-      utm_campaign: utmParams.utm_campaign,
-      utm_content: utmParams.utm_content,
-      utm_term: utmParams.utm_term,
-      page_url: window.location.href,
-      referrer: document.referrer,
-      cta_id: 'newsletter_jonathan_signup'
-    };
-
-    submitNewsletterPayload(payload);
-  };
+  });
 `;
 
 export const metadata: Metadata = {
   title: "Jonathan Anguelov - Site Officiel",
   description:
     "Site officiel de Jonathan Anguelov - Recois mes conseils en Start-up, Tech, Immobilier & Vente. Mes Videos, Webinar et Evenements Exclusifs.",
+  keywords: ["Jonathan Anguelov", "entrepreneur", "startup", "tech", "immobilier", "vente", "Aircall", "Aguesseau Capital"],
+  authors: [{ name: "Jonathan Anguelov" }],
+  creator: "Jonathan Anguelov",
+  publisher: "Jonathan Anguelov",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: "/10521134/679644bb0b1b6_Flavicon.png",
     apple: "/10521134/679644bb0b1b6_Flavicon.png",
+  },
+  verification: {
+    google: "your-google-verification-code", // À remplacer par votre code de vérification Google
   },
 };
 
