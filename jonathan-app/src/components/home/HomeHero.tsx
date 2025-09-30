@@ -266,13 +266,13 @@ export default function HomeHero() {
             </div>
           </div>
 
-          <div className="flex-1 max-w-xs sm:max-w-md flex flex-col justify-start -mt-8 sm:-mt-8 lg:-mt-16">
+          <div className="flex-1 max-w-xs sm:max-w-md lg:max-w-lg flex flex-col justify-start -mt-8 sm:-mt-8 lg:mt-0">
             <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl shadow-black/15 animate-card-hover">
               <Image
                 src={HERO_IMAGES.portrait.src}
                 alt={HERO_IMAGES.portrait.alt}
-                width={400}
-                height={500}
+                width={640}
+                height={720}
                 className="h-full w-full object-cover"
                 priority
               />
