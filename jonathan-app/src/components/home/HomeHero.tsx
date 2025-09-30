@@ -107,10 +107,13 @@ export default function HomeHero() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // Protection contre les doubles soumissions
+    // Protection contre les doubles soumissions - bloquer IMMÉDIATEMENT
     if (isSubmitting.current) {
+      console.log('🛑 Blocked duplicate submission');
       return;
     }
+    
+    console.log('✅ Processing submission from:', (event.target as HTMLFormElement).dataset.formId);
 
     if (!email) {
       setStatus("error");
@@ -203,7 +206,7 @@ export default function HomeHero() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <div className="hidden sm:flex items-center justify-center gap-2 sm:gap-3">
                 <Image
                   src={HERO_IMAGES.avatars.src}
                   alt={HERO_IMAGES.avatars.alt}
@@ -214,35 +217,38 @@ export default function HomeHero() {
                 <span className="text-base sm:text-lg font-bold text-[#012634]">Rejoindre +1 800 membres</span>
               </div>
 
-              {/* Formulaire unique - version desktop */}
-              <form
-                onSubmit={handleSubmit}
-                className="hidden sm:flex mx-auto max-w-xl items-center gap-2 rounded-full border border-white/70 bg-white px-6 py-2.5 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]"
-              >
-                <input
-                  type="email"
-                  placeholder="Votre email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  className="flex-1 max-w-sm rounded-full border border-transparent bg-transparent px-4 py-2.5 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
-                  disabled={status === "submitting"}
-                  required
-                />
-                <button
-                  type="submit"
-                  disabled={status === "submitting"}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-8 py-2.5 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              {/* Desktop form */}
+              <div className="hidden sm:block">
+                <form
+                  onSubmit={handleSubmit}
+                  data-form-id="desktop"
+                  className="mx-auto max-w-xl flex items-center gap-2 rounded-full border border-white/70 bg-white px-6 py-2.5 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]"
                 >
-                  <span aria-hidden="true">{"\u00bb"}</span>
-                  S&apos;abonner
-                </button>
-              </form>
+                  <input
+                    type="email"
+                    placeholder="Votre email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="flex-1 max-w-sm rounded-full border border-transparent bg-transparent px-4 py-2.5 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
+                    disabled={status === "submitting"}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={status === "submitting"}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-8 py-2.5 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <span aria-hidden="true">{"\u00bb"}</span>
+                    S&apos;abonner
+                  </button>
+                </form>
 
-              {status === "error" && errorMessage && (
-                <div className="hidden sm:block text-center">
-                  <p className="text-red-600 text-sm">{errorMessage}</p>
-                </div>
-              )}
+                {status === "error" && errorMessage && (
+                  <div className="text-center mt-2">
+                    <p className="text-red-600 text-sm">{errorMessage}</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -257,10 +263,10 @@ export default function HomeHero() {
                 priority
               />
 
-              {/* Formulaire unique - version mobile */}
+              {/* Mobile form - EN BAS DE L'IMAGE */}
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:hidden">
                 <div className="bg-white rounded-2xl p-4 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]">
-                  <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                  <form onSubmit={handleSubmit} data-form-id="mobile" className="flex flex-col gap-3">
                     <input
                       type="email"
                       placeholder="Votre adresse email"
