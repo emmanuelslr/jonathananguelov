@@ -214,6 +214,7 @@ export default function HomeHero() {
                 <span className="text-base sm:text-lg font-bold text-[#012634]">Rejoindre +1 800 membres</span>
               </div>
 
+              {/* Formulaire unique - version desktop */}
               <form
                 onSubmit={handleSubmit}
                 className="hidden sm:flex mx-auto max-w-xl items-center gap-2 rounded-full border border-white/70 bg-white px-6 py-2.5 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]"
@@ -256,6 +257,7 @@ export default function HomeHero() {
                 priority
               />
 
+              {/* Formulaire unique - version mobile */}
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:hidden">
                 <div className="bg-white rounded-2xl p-4 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]">
                   <form onSubmit={handleSubmit} className="flex flex-col gap-3">
