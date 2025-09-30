@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
 
@@ -20,7 +20,6 @@ export default function NewsletterSignup() {
   const [showPopup, setShowPopup] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { getValidToken, resetToken } = useNewsletterToken();
-  const isSubmitting = useRef(false);
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -94,11 +93,6 @@ export default function NewsletterSignup() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // Protection contre les doubles soumissions
-    if (isSubmitting.current) {
-      return;
-    }
-
     if (!email) {
       setStatus("error");
       setErrorMessage("L'email est requis.");
@@ -111,7 +105,6 @@ export default function NewsletterSignup() {
       return;
     }
 
-    isSubmitting.current = true;
     setStatus("submitting");
     setErrorMessage(null);
     setShowPopup(true);
@@ -145,7 +138,6 @@ export default function NewsletterSignup() {
         setStatus("error");
         setErrorMessage(result?.error ?? "Une erreur est survenue. Reessaie dans quelques instants.");
         setShowPopup(false);
-        isSubmitting.current = false;
         return;
       }
 
@@ -159,8 +151,6 @@ export default function NewsletterSignup() {
       setStatus("error");
       setErrorMessage("Une erreur est survenue. Reessaie dans quelques instants.");
       setShowPopup(false);
-    } finally {
-      isSubmitting.current = false;
     }
   }
 
@@ -241,14 +231,6 @@ export default function NewsletterSignup() {
             {status === "submitting" ? "Envoi en cours..." : "Je m&apos;inscris"}
           </button>
 
-          <button
-            type="button"
-            onClick={() => setShowPopup(true)}
-            className="w-full rounded-full bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-green-700"
-          >
-            TEST POPUP
-          </button>
-
           <p className="text-xs text-slate-500">
             Aucun spam. Tu pourras te desinscrire en un clic depuis chaque e-mail.
           </p>
@@ -263,5 +245,3 @@ export default function NewsletterSignup() {
     </section>
   );
 }
-
-

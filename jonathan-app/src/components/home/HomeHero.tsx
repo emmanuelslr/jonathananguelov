@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import AnimatedSection from "../AnimatedSection";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
@@ -35,7 +35,6 @@ export default function HomeHero() {
   const [showPopup, setShowPopup] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const { getValidToken, resetToken } = useNewsletterToken();
-  const isSubmitting = useRef(false);
 
   const handleClosePopup = () => {
     setShowPopup(false);
@@ -107,14 +106,6 @@ export default function HomeHero() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // Protection contre les doubles soumissions - bloquer IMMÉDIATEMENT
-    if (isSubmitting.current) {
-      console.log('🛑 Blocked duplicate submission');
-      return;
-    }
-    
-    console.log('✅ Processing submission from:', (event.target as HTMLFormElement).dataset.formId);
-
     if (!email) {
       setStatus("error");
       setErrorMessage("L'email est requis.");
@@ -127,7 +118,6 @@ export default function HomeHero() {
       return;
     }
 
-    isSubmitting.current = true;
     setStatus("submitting");
     setErrorMessage(null);
     setShowPopup(true);
@@ -161,21 +151,17 @@ export default function HomeHero() {
         setStatus("error");
         setErrorMessage(result?.error ?? "Une erreur est survenue. Reessaie dans quelques instants.");
         setShowPopup(false);
-        isSubmitting.current = false;
         return;
       }
 
       setStatus("success");
       setEmail("");
-      // Affichage immédiat du popup
       setShowPopup(true);
     } catch {
       resetToken();
       setStatus("error");
       setErrorMessage("Une erreur est survenue. Reessaie dans quelques instants.");
       setShowPopup(false);
-    } finally {
-      isSubmitting.current = false;
     }
   }
 
@@ -206,7 +192,7 @@ export default function HomeHero() {
                 </p>
               </div>
 
-              <div className="hidden sm:flex items-center justify-center gap-2 sm:gap-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3">
                 <Image
                   src={HERO_IMAGES.avatars.src}
                   alt={HERO_IMAGES.avatars.alt}
@@ -217,38 +203,66 @@ export default function HomeHero() {
                 <span className="text-base sm:text-lg font-bold text-[#012634]">Rejoindre +1 800 membres</span>
               </div>
 
-              {/* Desktop form */}
-              <div className="hidden sm:block">
-                <form
-                  onSubmit={handleSubmit}
-                  data-form-id="desktop"
-                  className="mx-auto max-w-xl flex items-center gap-2 rounded-full border border-white/70 bg-white px-6 py-2.5 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]"
+              {/* UN SEUL FORMULAIRE - adapté responsive */}
+              <form
+                onSubmit={handleSubmit}
+                className="
+                  mx-auto max-w-xl flex
+                  flex-col sm:flex-row
+                  items-center gap-3 sm:gap-2
+                  rounded-2xl sm:rounded-full
+                  border border-gray-200 sm:border-white/70
+                  bg-white
+                  px-4 sm:px-6 py-3 sm:py-2.5
+                  shadow-lg sm:shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]
+                "
+              >
+                <input
+                  type="email"
+                  placeholder="Votre adresse email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="
+                    w-full sm:flex-1 sm:max-w-sm
+                    rounded-full
+                    border border-gray-200 sm:border-transparent
+                    bg-white sm:bg-transparent
+                    px-4 py-2.5
+                    text-sm sm:text-base
+                    text-[#012634]
+                    placeholder:text-slate-500
+                    outline-none
+                    focus:border-[#3A8DFF] sm:focus:border-transparent
+                    focus:ring-2 focus:ring-[#3A8DFF]/30 sm:focus:ring-0
+                  "
+                  disabled={status === "submitting"}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="
+                    w-full sm:w-auto
+                    inline-flex items-center justify-center gap-2
+                    rounded-full bg-[#3A8DFF]
+                    px-5 sm:px-8 py-2.5
+                    text-sm sm:text-base font-semibold text-white
+                    shadow-md shadow-[#3A8DFF]/30
+                    transition hover:bg-[#2F78E0]
+                    focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40
+                    disabled:cursor-not-allowed disabled:opacity-60
+                  "
                 >
-                  <input
-                    type="email"
-                    placeholder="Votre email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    className="flex-1 max-w-sm rounded-full border border-transparent bg-transparent px-4 py-2.5 text-base text-[#012634] placeholder:text-slate-500 focus:border-transparent focus:outline-none focus:ring-0"
-                    disabled={status === "submitting"}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === "submitting"}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#3A8DFF] px-8 py-2.5 text-base font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <span aria-hidden="true">{"\u00bb"}</span>
-                    S&apos;abonner
-                  </button>
-                </form>
+                  <span aria-hidden="true">{"\u00bb"}</span>
+                  S&apos;abonner
+                </button>
+              </form>
 
-                {status === "error" && errorMessage && (
-                  <div className="text-center mt-2">
-                    <p className="text-red-600 text-sm">{errorMessage}</p>
-                  </div>
-                )}
-              </div>
+              {status === "error" && errorMessage && (
+                <div className="text-center mt-2">
+                  <p className="text-red-600 text-xs sm:text-sm">{errorMessage}</p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -262,37 +276,6 @@ export default function HomeHero() {
                 className="h-full w-full object-cover"
                 priority
               />
-
-              {/* Mobile form - EN BAS DE L'IMAGE */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:hidden">
-                <div className="bg-white rounded-2xl p-4 shadow-[0_-3px_8px_rgba(1,38,52,0.2),0_4px_8px_rgba(1,38,52,0.2)]">
-                  <form onSubmit={handleSubmit} data-form-id="mobile" className="flex flex-col gap-3">
-                    <input
-                      type="email"
-                      placeholder="Votre adresse email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      className="w-full rounded-full border border-gray-200 px-4 py-2.5 text-sm text-[#012634] placeholder:text-slate-500 outline-none focus:border-[#3A8DFF] focus:ring-2 focus:ring-[#3A8DFF]/30"
-                      disabled={status === "submitting"}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      disabled={status === "submitting"}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#3A8DFF] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-[#3A8DFF]/30 transition hover:bg-[#2F78E0] focus:outline-none focus:ring-2 focus:ring-[#3A8DFF]/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span aria-hidden="true">{"\u00bb"}</span>
-                      S&apos;abonner
-                    </button>
-                  </form>
-
-                  {status === "error" && errorMessage && (
-                    <div className="mt-2">
-                      <p className="text-red-600 text-xs">{errorMessage}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>
