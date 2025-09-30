@@ -90,7 +90,7 @@ export default function ConfirmationPopup({ isOpen, onClose }: ConfirmationPopup
               </div>
             </div>
 
-            <div className="relative h-48 w-full sm:h-64 lg:w-80 lg:h-full lg:flex-shrink-0">
+            <div className="relative h-48 w-full sm:h-64 lg:w-96 lg:min-h-[500px] lg:flex-shrink-0">
               <Image
                 src="/images/home-page/jonathan popup off.webp"
                 alt="Jonathan Anguelov"
