@@ -152,6 +152,8 @@ type NewsletterPayload = {
   email?: string;
   firstName?: string;
   lastName?: string;
+  newsletter?: string;
+  source_formulaire?: string;
   utm_source?: string;
   utm_medium?: string;
   utm_campaign?: string;
@@ -265,6 +267,8 @@ export async function POST(request: Request) {
 
     const firstName = sanitizeString(data.firstName);
     const lastName = sanitizeString(data.lastName);
+    const newsletter = sanitizeString(data.newsletter) || "newsletter_jonathananguelov";
+    const sourceFormulaire = sanitizeString(data.source_formulaire) || "newsletter_jonathan";
     const utmSource = sanitizeString(data.utm_source);
     const utmMedium = sanitizeString(data.utm_medium);
     const utmCampaign = sanitizeString(data.utm_campaign);
@@ -278,6 +282,8 @@ export async function POST(request: Request) {
       email,
       firstName,
       lastName,
+      newsletter,
+      source_formulaire: sourceFormulaire,
       utm_source: utmSource || "jonathananguelov",
       utm_medium: utmMedium || "newsletter",
       utm_campaign: utmCampaign || "newsletter_jonathan",
@@ -307,11 +313,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // HubSpot integration désactivée pour éviter les doublons avec GTM
-    // Si vous souhaitez réactiver l'envoi direct à HubSpot, décommentez le code ci-dessous
-    // et assurez-vous de désactiver les tags HubSpot dans Google Tag Manager
-    
-    /*
+    // HubSpot integration
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
@@ -325,6 +327,8 @@ export async function POST(request: Request) {
           { name: "email", value: email },
           { name: "firstname", value: firstName },
           { name: "lastname", value: lastName },
+          { name: "newsletter", value: newsletter },
+          { name: "source_formulaire", value: sourceFormulaire },
           { name: "utm_source", value: offstonePayload.utm_source },
           { name: "utm_medium", value: offstonePayload.utm_medium },
           { name: "utm_campaign", value: offstonePayload.utm_campaign },
@@ -365,7 +369,6 @@ export async function POST(request: Request) {
         email: maskEmail(email),
       });
     }
-    */
 
     return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {

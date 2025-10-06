@@ -129,6 +129,8 @@ export default function HomeHero() {
         email,
         firstName: "",
         lastName: "",
+        newsletter: "newsletter_jonathananguelov",
+        source_formulaire: "newsletter_jonathan",
         ...utmParams,
       };
 
