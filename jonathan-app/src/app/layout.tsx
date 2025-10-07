@@ -4,7 +4,8 @@ import "@/styles/extracted.css";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
 
-const GTM_SCRIPT = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'$GT':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NTPVFF9B');`.replace("$GT", "gtm.start");
+// GTM désactivé temporairement pour éviter les doublons avec l'API HubSpot directe
+// const GTM_SCRIPT = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'$GT':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-NTPVFF9B');`.replace("$GT", "gtm.start");
 
 export const metadata: Metadata = {
   title: "Jonathan Anguelov - Site Officiel",
@@ -51,9 +52,10 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://d3fit27i5nzkqh.cloudfront.net/assets/css/optimizedFontAwesome.css"
         />
-        <Script id="gtm-script" strategy="afterInteractive">
+        {/* GTM désactivé temporairement pour éviter les doublons avec l'API HubSpot directe */}
+        {/* <Script id="gtm-script" strategy="afterInteractive">
           {GTM_SCRIPT}
-        </Script>
+        </Script> */}
       </head>
       <body suppressHydrationWarning={true}>
         {children}
