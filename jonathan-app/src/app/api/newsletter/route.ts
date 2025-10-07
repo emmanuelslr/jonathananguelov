@@ -314,7 +314,16 @@ export async function POST(request: Request) {
       }
     }
 
-    // HubSpot integration - Envoi direct avec les nouveaux champs
+    // HubSpot integration COMPLÈTEMENT DÉSACTIVÉE pour identifier la source du doublon
+    console.log("🔍 DEBUG: Soumission newsletter reçue - HubSpot désactivé", {
+      email: maskEmail(email),
+      newsletter: "Newsletter Jonathan Anguelov",
+      source_formulaire: sourceFormulaire,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Si vous voyez encore des soumissions dans HubSpot, c'est qu'il y a une autre source
+    /*
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
@@ -370,6 +379,7 @@ export async function POST(request: Request) {
         email: maskEmail(email),
       });
     }
+    */
 
     return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {
