@@ -185,7 +185,11 @@ export default function NewsletterSignup() {
           </ul>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 space-y-4 rounded-2xl bg-white p-6 text-slate-900 shadow-lg">
+        {/* FORMULAIRE TEMPORAIREMENT DÉSACTIVÉ POUR ÉVITER LES DOUBLONS */}
+        <div className="flex-1 space-y-4 rounded-2xl bg-white p-6 text-slate-900 shadow-lg">
+          <p className="text-center text-slate-600">Formulaire temporairement désactivé - Utilisez le formulaire du Hero ci-dessus</p>
+        </div>
+        {/* <form onSubmit={handleSubmit} className="flex-1 space-y-4 rounded-2xl bg-white p-6 text-slate-900 shadow-lg"> */}
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="flex flex-col gap-2 text-sm font-medium text-slate-700">
               Prenom
@@ -240,7 +244,7 @@ export default function NewsletterSignup() {
           {status === "error" && errorMessage && (
             <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{errorMessage}</p>
           )}
-        </form>
+        {/* </form> */}
       </div>
 
       <ConfirmationPopup isOpen={showPopup} onClose={handleClosePopup} />
