@@ -313,7 +313,16 @@ export async function POST(request: Request) {
       }
     }
 
-    // HubSpot integration - Envoi direct avec les nouveaux champs
+    // HubSpot integration TEMPORAIREMENT DÉSACTIVÉE pour identifier la source du doublon
+    // Si vous voyez encore des soumissions dans HubSpot, c'est qu'il y a une autre source
+    console.log("🔍 DEBUG: Soumission newsletter reçue", {
+      email: maskEmail(email),
+      newsletter: newsletter,
+      source_formulaire: sourceFormulaire,
+      timestamp: new Date().toISOString()
+    });
+    
+    /*
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
@@ -369,6 +378,7 @@ export async function POST(request: Request) {
         email: maskEmail(email),
       });
     }
+    */
 
     return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {
