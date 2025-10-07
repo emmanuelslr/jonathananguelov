@@ -313,14 +313,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // HubSpot integration désactivée pour éviter les doublons avec GTM
-    // GTM gère l'envoi à HubSpot avec les champs newsletter et source_formulaire
-    // Les données sont disponibles via le dataLayer pour GTM
-    
-    // Si vous souhaitez réactiver l'envoi direct à HubSpot, décommentez le code ci-dessous
-    // et assurez-vous de désactiver les tags HubSpot dans Google Tag Manager
-    
-    /*
+    // HubSpot integration - Envoi direct avec les nouveaux champs
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
@@ -376,7 +369,6 @@ export async function POST(request: Request) {
         email: maskEmail(email),
       });
     }
-    */
 
     return buildJson({ ok: true, message: "Subscription accepted" });
   } catch (error) {
