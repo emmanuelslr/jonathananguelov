@@ -6,21 +6,6 @@ import ConfirmationPopup from "./ConfirmationPopup";
 import AnimatedSection from "../AnimatedSection";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
 
-// Déclaration des types pour gtag
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      action: string,
-      parameters: {
-        event_category?: string;
-        event_label?: string;
-        custom_parameters?: Record<string, any>;
-      }
-    ) => void;
-  }
-}
-
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
 const HERO_IMAGES = {

@@ -4,21 +4,6 @@ import { useEffect, useState } from "react";
 import ConfirmationPopup from "./ConfirmationPopup";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
 
-// Déclaration des types pour gtag
-declare global {
-  interface Window {
-    gtag?: (
-      command: string,
-      action: string,
-      parameters: {
-        event_category?: string;
-        event_label?: string;
-        custom_parameters?: Record<string, any>;
-      }
-    ) => void;
-  }
-}
-
 type FormState = "idle" | "submitting" | "success" | "error";
 
 function isValidEmail(value: string) {
