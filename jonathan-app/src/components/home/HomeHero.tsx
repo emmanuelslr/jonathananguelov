@@ -6,6 +6,21 @@ import ConfirmationPopup from "./ConfirmationPopup";
 import AnimatedSection from "../AnimatedSection";
 import { useNewsletterToken } from "@/hooks/useNewsletterToken";
 
+// Déclaration des types pour gtag
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      action: string,
+      parameters: {
+        event_category?: string;
+        event_label?: string;
+        custom_parameters?: Record<string, any>;
+      }
+    ) => void;
+  }
+}
+
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
 const HERO_IMAGES = {
@@ -159,6 +174,28 @@ export default function HomeHero() {
       setStatus("success");
       setEmail("");
       setShowPopup(true);
+
+      // Envoyer les données au dataLayer pour GTM
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "newsletter_signup", {
+          event_category: "engagement",
+          event_label: "hero_newsletter_signup",
+          custom_parameters: {
+            newsletter: "newsletter_jonathananguelov",
+            source_formulaire: "newsletter_jonathan",
+            email: email,
+            firstname: "",
+            lastname: "",
+            utm_source: utmParams.utm_source,
+            utm_medium: utmParams.utm_medium,
+            utm_campaign: utmParams.utm_campaign,
+            utm_content: utmParams.utm_content,
+            utm_term: utmParams.utm_term,
+            page_url: utmParams.page_url,
+            cta_id: utmParams.cta_id,
+          },
+        });
+      }
     } catch {
       resetToken();
       setStatus("error");
