@@ -112,12 +112,23 @@ export default function NewsletterSignup() {
     try {
       const securityToken = await getValidToken();
       const utmParams = getUtmParams();
+      
+      // Récupère le cookie HubSpot (hutk) pour lier la soumission au contact
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return undefined;
+      };
+      const hubspotUtk = getCookie('hubspotutk');
+      
       const payload = {
         email,
         firstName,
         lastName,
         newsletter: "newsletter_jonathananguelov",
         source_formulaire: "newsletter_jonathan",
+        hubspotUtk,
         ...utmParams,
       };
 

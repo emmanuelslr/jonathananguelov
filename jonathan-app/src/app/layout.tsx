@@ -52,6 +52,12 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://d3fit27i5nzkqh.cloudfront.net/assets/css/optimizedFontAwesome.css"
         />
+        {/* HubSpot Tracking Code - Permet de lier les soumissions de formulaire aux contacts */}
+        <Script
+          id="hs-script-loader"
+          strategy="afterInteractive"
+          src={`//js.hs-scripts.com/${process.env.NEXT_PUBLIC_HUBSPOT_PORTAL_ID}.js`}
+        />
         {/* GTM désactivé temporairement pour éviter les doublons avec l'API HubSpot directe */}
         {/* <Script id="gtm-script" strategy="afterInteractive">
           {GTM_SCRIPT}
