@@ -268,7 +268,8 @@ export async function POST(request: Request) {
 
     const firstName = sanitizeString(data.firstName);
     const lastName = sanitizeString(data.lastName);
-    const newsletter = sanitizeString(data.newsletter) || "newsletter_jonathananguelov";
+    // Force la valeur newsletter à "newsletter_jonathananguelov" pour le menu déroulant HubSpot
+    const newsletter = "newsletter_jonathananguelov";
     const sourceFormulaire = sanitizeString(data.source_formulaire) || "newsletter_jonathan";
     const utmSource = sanitizeString(data.utm_source);
     const utmMedium = sanitizeString(data.utm_medium);
@@ -295,9 +296,19 @@ export async function POST(request: Request) {
       cta_id: ctaId || "newsletter_jonathan_signup",
     };
 
+    // OFFSTONE DÉSACTIVÉ - N'envoie pas le champ newsletter à HubSpot
+    console.log("[NEWSLETTER] Offstone disabled - sending directly to HubSpot instead");
+    
+    /* OFFSTONE DÉSACTIVÉ CAR NE TRANSFÈRE PAS LE CHAMP NEWSLETTER
+    console.log("[NEWSLETTER] Full payload to Offstone:", JSON.stringify({
+      ...offstonePayload,
+      email: maskEmail(email)
+    }, null, 2));
+
     if (OFFSTONE_API_URL) {
       try {
-        await fetch(OFFSTONE_API_URL, {
+        console.log("[NEWSLETTER] Sending to Offstone", { email: maskEmail(email) });
+        const offstoneResponse = await fetch(OFFSTONE_API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -306,6 +317,11 @@ export async function POST(request: Request) {
           },
           body: JSON.stringify(offstonePayload),
         });
+        console.log("[NEWSLETTER] Offstone response:", { 
+          status: offstoneResponse.status,
+          ok: offstoneResponse.ok,
+          email: maskEmail(email) 
+        });
       } catch (error) {
         console.error("Offstone forwarding failed", {
           message: error instanceof Error ? error.message : "Unknown error",
@@ -313,13 +329,15 @@ export async function POST(request: Request) {
         });
       }
     }
+    */
 
-    // HubSpot integration - Envoi direct avec les nouveaux champs
+    // HubSpot integration - Envoi direct RÉACTIVÉ avec le champ newsletter
     if (!process.env.HUBSPOT_PORTAL_ID || !process.env.HUBSPOT_FORM_ID) {
       console.error("HubSpot configuration missing", { email: maskEmail(email) });
       return buildJson({ ok: true, message: "Subscription accepted" });
     }
 
+    console.log("[NEWSLETTER] Sending to HubSpot directly", { email: maskEmail(email) });
     try {
       const hubspotPayload = {
         portalId: process.env.HUBSPOT_PORTAL_ID,
@@ -328,7 +346,7 @@ export async function POST(request: Request) {
           { name: "email", value: email },
           { name: "firstname", value: firstName },
           { name: "lastname", value: lastName },
-          { name: "newsletter", value: "Newsletter Jonathan Anguelov" },
+          { name: "newsletter", value: newsletter }, // Utilise "newsletter_jonathananguelov"
           { name: "source_formulaire", value: sourceFormulaire },
           { name: "utm_source", value: offstonePayload.utm_source },
           { name: "utm_medium", value: offstonePayload.utm_medium },
@@ -346,6 +364,10 @@ export async function POST(request: Request) {
         },
       };
 
+      console.log("[NEWSLETTER] HubSpot payload:", JSON.stringify({
+        fields: hubspotPayload.fields.map(f => ({ name: f.name, value: f.name === 'email' ? maskEmail(String(f.value)) : f.value }))
+      }, null, 2));
+
       const hubspotResponse = await fetch(
         `https://api.hsforms.com/submissions/v3/integration/submit/${process.env.HUBSPOT_PORTAL_ID}/${process.env.HUBSPOT_FORM_ID}`,
         {
@@ -359,9 +381,17 @@ export async function POST(request: Request) {
       );
 
       if (!hubspotResponse.ok) {
+        const errorText = await hubspotResponse.text();
         console.error("HubSpot submission failed", {
           status: hubspotResponse.status,
+          error: errorText,
           email: maskEmail(email),
+        });
+      } else {
+        console.log("[NEWSLETTER] HubSpot sent successfully", { 
+          email: maskEmail(email),
+          status: hubspotResponse.status,
+          newsletter: newsletter
         });
       }
     } catch (error) {
